@@ -13,10 +13,10 @@ import pickle
 import scipy.stats as ss
 
 
-total_models = 200
+total_models = 1000
 feature_imp = []
 for ii in tqdm(range(total_models)):
-    with open('morf_models/model'+str(ii)+'.pickle','rb') as f:
+    with open('morf_models/NHP_model'+str(ii)+'.pickle','rb') as f:
         morf = pickle.load(f)
         feature_imp.append(
             morf.feature_importances_
@@ -24,7 +24,7 @@ for ii in tqdm(range(total_models)):
         del morf
 
 for ii in tqdm(range(total_models)):
-    with open('morf_shuffled_models/model'+str(ii)+'.pickle','rb') as f:
+    with open('morf_shuffled_models/NHP_model'+str(ii)+'.pickle','rb') as f:
         morf = pickle.load(f)
         feature_imp.append(
             morf.feature_importances_
@@ -32,5 +32,5 @@ for ii in tqdm(range(total_models)):
         del morf
 
 
-with open('feature_imp.pickle','wb') as f:
+with open('feature_imp_NHP.pickle','wb') as f:
     pickle.dump(feature_imp, f)
