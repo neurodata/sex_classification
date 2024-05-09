@@ -31,9 +31,9 @@ class PermutationTest():
         Helper function that calulates the feature importance
         test statistic.
         """
-        diff_rank = self.feature_importance[idx[:self.n_estimators]] - \
+        diff_rank = self.feature_importance[idx[:self.n_estimators]] < \
             self.feature_importance[idx[self.n_estimators:]]
-        stat = np.mean(diff_rank<0,axis=0)
+        stat = np.mean(diff_rank,axis=0)
 
         return stat
 
