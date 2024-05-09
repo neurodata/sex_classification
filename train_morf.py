@@ -54,7 +54,7 @@ for subject in tqdm(subjects):
         for file in files:
             if 'mwp1' in file:
                 try:
-                    img = nb.load(file).get_fdata()
+                    img = nb.load(file).get_fdata().reshape(-1)
                     file_count +=1 
                 except:
                     break
@@ -62,7 +62,7 @@ for subject in tqdm(subjects):
         for file in files:
             if 'mwp2' in file:
                 try:
-                    img = np.concatenate((img, nb.load(file).get_fdata()),axis=0)
+                    img = np.concatenate((img, nb.load(file).get_fdata().reshape(-1)))
                     file_count +=1 
                 except:
                     break
@@ -82,7 +82,7 @@ y = np.array(y)
 print('data shape', X.shape)
 print('mean label', np.mean(y))
 
-total_models = 200
+total_models = 500
 idx = list(range(len(y)))
 
 np.random.seed(0)
@@ -91,21 +91,29 @@ train_samples = int(len(y)*0.8)
 test_samples = len(y) - train_samples
 train_ids = idx[:train_samples]
 
-for ii in tqdm(range(131,total_models)):
+'''for ii in tqdm(range(total_models)):
     np.random.seed(ii)
     np.random.shuffle(train_ids)
     idx_chosen = train_ids[:int(len(y)*0.8*0.7)]
     
-    morf = PatchObliqueRandomForestClassifier(n_estimators=1, max_patch_dims=np.array((4, 4, 4)), data_dims=np.array((113*2, 137, 113)), n_jobs=-1)
-    morf.fit(X[idx_chosen], y[idx_chosen])
+    morf = PatchObliqueRandomForestClassifier(n_estimators=1, max_patch_dims=np.array((4, 4, 4)), data_dims=np.array((113, 137, 113)), n_jobs=-1)
+    morf.fit(X[idx_chosen,:113*137*113], y[idx_chosen])
 
-    with open('morf_models/model'+str(ii)+'.pickle','wb') as f:
+    with open('morf_models/model'+str(ii)+'_gray.pickle','wb') as f:
         pickle.dump(morf, f)
 
     del morf
 
+    morf = PatchObliqueRandomForestClassifier(n_estimators=1, max_patch_dims=np.array((4, 4, 4)), data_dims=np.array((113, 137, 113)), n_jobs=-1)
+    morf.fit(X[idx_chosen,113*137*113:], y[idx_chosen])
 
+    with open('morf_models/model'+str(ii)+'_white.pickle','wb') as f:
+        pickle.dump(morf, f)
 
+    del morf'''
+
+feature_imp_gray = []
+feature_imp_white = []
 train_ids = idx[:train_samples]
 for ii in tqdm(range(total_models)):
     random.shuffle(y)
@@ -114,15 +122,28 @@ for ii in tqdm(range(total_models)):
     np.random.shuffle(train_ids)
     idx_chosen = train_ids[:int(len(y)*0.8*0.7)]
     
-    morf = PatchObliqueRandomForestClassifier(n_estimators=1, max_patch_dims=np.array((4, 4, 4)), data_dims=np.array((113*2, 137, 113)), n_jobs=-1)
-    morf.fit(X[idx_chosen], y[idx_chosen])
+    morf = PatchObliqueRandomForestClassifier(n_estimators=1, max_patch_dims=np.array((4, 4, 4)), data_dims=np.array((113, 137, 113)), n_jobs=-1)
+    morf.fit(X[idx_chosen,:113*137*113], y[idx_chosen])
 
-    with open('morf_shuffled_models/model'+str(ii)+'.pickle','wb') as f:
-        pickle.dump(morf, f)
+    feature_imp_gray.append(
+            morf.feature_importances_
+        )
+
+    del morf
+
+    morf = PatchObliqueRandomForestClassifier(n_estimators=1, max_patch_dims=np.array((4, 4, 4)), data_dims=np.array((113, 137, 113)), n_jobs=-1)
+    morf.fit(X[idx_chosen,113*137*113:], y[idx_chosen])
+
+    feature_imp_white.append(
+            morf.feature_importances_
+        )
 
     del morf
 
 
+with open('feature_imp_gray_random.pickle','wb') as f:
+    pickle.dump(feature_imp_gray, f)
 
-
+with open('feature_imp_white_random.pickle','wb') as f:
+    pickle.dump(feature_imp_white, f)
 
