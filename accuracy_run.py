@@ -53,7 +53,7 @@ for subject in tqdm(subjects):
         for file in files:
             if 'mwp1' in file:
                 try:
-                    img = nb.load(file).get_fdata()
+                    img = nb.load(file).get_fdata().reshape(-1)
                     file_count +=1 
                 except:
                     break
@@ -61,7 +61,7 @@ for subject in tqdm(subjects):
         for file in files:
             if 'mwp2' in file:
                 try:
-                    img = np.concatenate((img, nb.load(file).get_fdata()),axis=0)
+                    img = np.concatenate((img, nb.load(file).get_fdata().reshape(-1)))
                     file_count +=1 
                 except:
                     break
@@ -78,9 +78,12 @@ for subject in tqdm(subjects):
 X = np.concatenate(X,axis=0)
 y = np.array(y)
 
+print('data shape', X.shape)
+print('mean label', np.mean(y))
+
 
 ####################################################
-total_models = 200
+total_models = 1000
 idx = list(range(len(y)))
 
 np.random.seed(0)
@@ -88,17 +91,28 @@ np.random.shuffle(idx)
 train_samples = int(len(y)*0.8)
 test_samples = len(y) - train_samples
 test_ids = idx[train_samples:]
+X_test = X[test_ids].copy()
+y_test = y[test_ids].copy()
 
-predicted_proba_ = []
+del X
+del y
+
+predicted_proba_ = np.zeros((len(y_test),2), dtype=float)
 for ii in tqdm(range(total_models)):
-    with open('morf_models/model'+str(ii)+'.pickle','rb') as f:
+    with open('morf_models/model'+str(ii)+'_gray.pickle','rb') as f:
         morf = pickle.load(f)
-        predicted_proba_.append(
-            morf.predict_proba(X[test_ids])
-        )
-        del morf
+        
+    predicted_proba_ += morf.predict_proba(X_test[:,:113*137*113])
+        
+    del morf
 
-predicted_proba = np.mean(predicted_proba_,axis=0)
-predicted_label = np.argmax(predicted_proba,axis=1)
-print('MORF accuracy ', np.mean(predicted_label==y[test_ids]))
+    with open('morf_models/model'+str(ii)+'_white.pickle','rb') as f:
+        morf = pickle.load(f)
+        
+    predicted_proba_ += morf.predict_proba(X_test[:,113*137*113:])
+    del morf
+
+#predicted_proba = np.mean(predicted_proba_,axis=0)
+predicted_label = np.argmax(predicted_proba_/(2*total_models),axis=1)
+print('MORF accuracy ', np.mean(predicted_label==y_test))
 

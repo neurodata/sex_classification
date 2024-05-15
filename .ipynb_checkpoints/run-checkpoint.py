@@ -13,9 +13,14 @@ import pickle
 import scipy.stats as ss
 
 
-total_models = 500
+total_models = 1000
 feature_imp = []
-for ii in tqdm(range(total_models)):
+with open('feature_imp_gray_NHP.pickle','rb') as f:
+    feature_imp = pickle.load(f)
+
+#print(len(feature_imp), 'its the length')
+
+for ii in tqdm(range(500,total_models)):
     with open('morf_models/NHP_model'+str(ii)+'_gray.pickle','rb') as f:
         morf = pickle.load(f)
         feature_imp.append(
@@ -30,7 +35,10 @@ with open('feature_imp_gray_NHP.pickle','wb') as f:
 
 #############################################################
 feature_imp = []
-for ii in tqdm(range(total_models)):
+with open('feature_imp_white_NHP.pickle','rb') as f:
+    feature_imp = pickle.load(f)
+    
+for ii in tqdm(range(500,total_models)):
     with open('morf_models/NHP_model'+str(ii)+'_white.pickle','rb') as f:
         morf = pickle.load(f)
         feature_imp.append(

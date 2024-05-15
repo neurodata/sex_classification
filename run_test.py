@@ -58,9 +58,11 @@ class PermutationTest():
         y : ArrayLike of shape (n_samples, n_outputs)
             The target matrix.
         n_repeats : int, optional
-            Number of times to sample the null distribution, by default 1000.
+            Number of times to sample the null distribution, 
+            by default 1000.
         n_jobs : int, optional
-            Number of workers to use, by default 1000.
+            Number of workers to use, by default uses all the 
+            workers available.
 
         Returns
         -------
@@ -93,13 +95,13 @@ class PermutationTest():
 
 
 if __name__ == "__main__":
-    total_models = 500
+    total_models = 1000
     reps = 10000
     
-    with open('feature_imp_white_NHP.pickle','rb') as f:
+    with open('feature_imp_white.pickle','rb') as f:
         feature_imp1 = pickle.load(f)
 
-    with open('feature_imp_white_NHP_random.pickle','rb') as f:
+    with open('feature_imp_white_random.pickle','rb') as f:
         feature_imp2 = pickle.load(f)
 
     feature_imp = np.concatenate(
@@ -112,9 +114,9 @@ if __name__ == "__main__":
 
 
     test = PermutationTest(n_estimators=total_models, feature_importance=feature_imp)
-    stat, p_val = test.test(n_repeats = reps, n_jobs=22)
+    stat, p_val = test.test(n_repeats = reps, n_jobs=10)
 
-    with open('feature_imp_white_pval_NHP.pickle','wb') as f:
+    with open('feature_imp_white_pval.pickle','wb') as f:
         pickle.dump(p_val, f)
 
     

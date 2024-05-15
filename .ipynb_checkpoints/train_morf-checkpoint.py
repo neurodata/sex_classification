@@ -82,7 +82,7 @@ y = np.array(y)
 print('data shape', X.shape)
 print('mean label', np.mean(y))
 
-total_models = 500
+total_models = 1000
 idx = list(range(len(y)))
 
 np.random.seed(0)
@@ -91,7 +91,7 @@ train_samples = int(len(y)*0.8)
 test_samples = len(y) - train_samples
 train_ids = idx[:train_samples]
 
-'''for ii in tqdm(range(total_models)):
+for ii in tqdm(range(650,total_models)):
     np.random.seed(ii)
     np.random.shuffle(train_ids)
     idx_chosen = train_ids[:int(len(y)*0.8*0.7)]
@@ -110,12 +110,21 @@ train_ids = idx[:train_samples]
     with open('morf_models/model'+str(ii)+'_white.pickle','wb') as f:
         pickle.dump(morf, f)
 
-    del morf'''
+    del morf
 
-feature_imp_gray = []
-feature_imp_white = []
+
+
+#feature_imp_gray = []
+#feature_imp_white = []
+with open('feature_imp_gray_random.pickle','rb') as f:
+    feature_imp_gray = pickle.load(f)
+
+with open('feature_imp_white_random.pickle','rb') as f:
+    feature_imp_white = pickle.load(f)
+
+
 train_ids = idx[:train_samples]
-for ii in tqdm(range(total_models)):
+for ii in tqdm(range(650,total_models)):
     random.shuffle(y)
     
     np.random.seed(ii)
