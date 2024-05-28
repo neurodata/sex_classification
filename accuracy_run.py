@@ -99,17 +99,36 @@ del y
 
 predicted_proba_ = np.zeros((len(y_test),2), dtype=float)
 for ii in tqdm(range(total_models)):
-    with open('morf_models/model'+str(ii)+'_gray.pickle','rb') as f:
-        morf = pickle.load(f)
+    model_path = '/cis/home/jdey4/sex_classification/morf_models/model'+str(ii)+'_gray.pickle'
+
+    if os.path.exists(model_path):
+        with open(model_path,'rb') as f:
+            morf = pickle.load(f)
+    else:
+        model_path = '/cis/project/jdey4_projects/morf_models/model'+str(ii)+'_gray.pickle'
         
+        with open(model_path,'rb') as f:
+            morf = pickle.load(f)
+    
     predicted_proba_ += morf.predict_proba(X_test[:,:113*137*113])
         
     del morf
 
-    with open('morf_models/model'+str(ii)+'_white.pickle','rb') as f:
-        morf = pickle.load(f)
+    ####################################################
+
+    model_path = '/cis/home/jdey4/sex_classification/morf_models/model'+str(ii)+'_white.pickle'
+    
+    if os.path.exists(model_path):
+        with open(model_path,'rb') as f:
+            morf = pickle.load(f)
+    else:
+        model_path = '/cis/project/jdey4_projects/morf_models/model'+str(ii)+'_white.pickle'
         
-    predicted_proba_ += morf.predict_proba(X_test[:,113*137*113:])
+        with open(model_path,'rb') as f:
+            morf = pickle.load(f)
+    
+    predicted_proba_ += morf.predict_proba(X_test[:,:113*137*113])
+        
     del morf
 
 #predicted_proba = np.mean(predicted_proba_,axis=0)

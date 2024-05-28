@@ -102,7 +102,8 @@ train_samples = int(len(y)*0.8)
 test_samples = len(y) - train_samples
 train_ids = idx[:train_samples]
 
-'''for ii in tqdm(range(500,total_models)):
+feature_imp = []
+for ii in tqdm(range(total_models)):
     np.random.seed(ii)
     np.random.shuffle(train_ids)
     idx_chosen = train_ids[:int(len(y)*0.8*0.7)]
@@ -113,15 +114,36 @@ train_ids = idx[:train_samples]
     with open('morf_models/NHP_model'+str(ii)+'_gray.pickle','wb') as f:
         pickle.dump(morf, f)
 
+    feature_imp.append(
+            morf.feature_importances_
+        )
     del morf
 
+with open('feature_imp_gray_NHP.pickle','wb') as f:
+    pickle.dump(feature_imp, f)
+
+
+
+feature_imp = []
+for ii in tqdm(range(total_models)):
+    np.random.seed(ii)
+    np.random.shuffle(train_ids)
+    idx_chosen = train_ids[:int(len(y)*0.8*0.7)]
+    
     morf = PatchObliqueRandomForestClassifier(n_estimators=1, max_patch_dims=np.array((4, 4, 4)), data_dims=np.array((113, 137, 113)))
     morf.fit(X[idx_chosen,113*137*113:], y[idx_chosen])
 
     with open('morf_models/NHP_model'+str(ii)+'_white.pickle','wb') as f:
         pickle.dump(morf, f)
 
-    del morf'''
+    feature_imp.append(
+            morf.feature_importances_
+        )
+    del morf
+
+with open('feature_imp_white_NHP.pickle','wb') as f:
+    pickle.dump(feature_imp, f)
+    
 
 
 feature_imp = []

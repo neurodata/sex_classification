@@ -98,10 +98,10 @@ if __name__ == "__main__":
     total_models = 1000
     reps = 10000
     
-    with open('feature_imp_white.pickle','rb') as f:
+    with open('feature_imp_gray_NHP.pickle','rb') as f:
         feature_imp1 = pickle.load(f)
 
-    with open('feature_imp_white_random.pickle','rb') as f:
+    with open('feature_imp_gray_NHP_random.pickle','rb') as f:
         feature_imp2 = pickle.load(f)
 
     feature_imp = np.concatenate(
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     test = PermutationTest(n_estimators=total_models, feature_importance=feature_imp)
     stat, p_val = test.test(n_repeats = reps, n_jobs=10)
 
-    with open('feature_imp_white_pval.pickle','wb') as f:
+    with open('feature_imp_gray_pval_NHP.pickle','wb') as f:
         pickle.dump(p_val, f)
 
     

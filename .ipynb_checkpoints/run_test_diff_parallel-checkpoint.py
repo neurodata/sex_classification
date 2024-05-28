@@ -92,13 +92,13 @@ class PermutationTest():
 
 
 if __name__ == "__main__":
-    total_models = 500
-    reps = 100
+    total_models = 1000
+    reps = 10000
     
-    with open('feature_imp_gray.pickle','rb') as f:
+    with open('feature_imp_white_NHP.pickle','rb') as f:
         feature_imp1 = pickle.load(f)
 
-    with open('feature_imp_gray_random.pickle','rb') as f:
+    with open('feature_imp_white_NHP_random.pickle','rb') as f:
         feature_imp2 = pickle.load(f)
 
     feature_imp = np.concatenate(
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     test = PermutationTest(n_estimators=total_models, feature_importance=feature_imp)
     stat, p_val = test.test(n_repeats = reps, n_jobs=-1)
 
-    with open('feature_imp_gray_pval.pickle','wb') as f:
+    with open('feature_imp_white_pval_NHP.pickle','wb') as f:
         pickle.dump(p_val, f)
 
     
